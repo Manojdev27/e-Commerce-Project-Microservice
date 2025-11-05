@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hogwarts.orderservice.dto.BulkOrderRequestDto;
 import com.hogwarts.orderservice.dto.OrderRequestDto;
 import com.hogwarts.orderservice.entity.Order;
 import com.hogwarts.orderservice.service.OrderService;
@@ -40,5 +42,11 @@ public class OrderController {
 		return orderService.getOrderById(id);
 		
 	}
+	@PostMapping("/bulkOrder")
+	public ResponseEntity<List<Order>> placeBulkOrders(@RequestBody BulkOrderRequestDto bulkOrderRequestDto) {
+	    List<Order> orders = orderService.placeBulkOrder(bulkOrderRequestDto);
+	    return ResponseEntity.ok(orders);
+	}
+
 
 }
