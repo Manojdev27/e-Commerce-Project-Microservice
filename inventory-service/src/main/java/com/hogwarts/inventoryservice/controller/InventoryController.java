@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hogwarts.inventoryservice.entity.Inventory;
+import com.hogwarts.inventoryservice.entity.dto.InventoryDto;
 import com.hogwarts.inventoryservice.service.InventoryService;
 
 @RestController
@@ -21,7 +22,7 @@ public class InventoryController {
 	private InventoryService inventoryService;
 	
 	@PostMapping("/inventoryUpdate")
-	public Inventory updateInventory(@RequestBody Inventory inventory) {
+	public Inventory updateInventory(@RequestBody InventoryDto inventory) {
 		return inventoryService.updateInventory(inventory);
 	}
 	@GetMapping("/{productId}")

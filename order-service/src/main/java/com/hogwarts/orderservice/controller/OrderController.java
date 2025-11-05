@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hogwarts.orderservice.dto.OrderRequestDto;
 import com.hogwarts.orderservice.entity.Order;
 import com.hogwarts.orderservice.service.OrderService;
 
@@ -22,9 +23,9 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@PostMapping("/newOrder")
-	public Order placeNewOrder(@RequestBody Order order)
+	public Order placeNewOrder(@RequestBody OrderRequestDto orderRequestDto)
 	{
-		return orderService.placeNewOrder(order);
+		return orderService.placeNewOrder(orderRequestDto);
 	}
 	
 	@GetMapping("/allOrder")

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.hogwarts.inventoryservice.entity.Inventory;
 import com.hogwarts.inventoryservice.entity.client.ProductClient;
+import com.hogwarts.inventoryservice.entity.dto.InventoryDto;
 import com.hogwarts.inventoryservice.entity.dto.ProductDto;
 import com.hogwarts.inventoryservice.repository.InventoryRepository;
 import com.hogwarts.inventoryservice.service.InventoryService;
@@ -23,20 +24,33 @@ public class InventoryServiceImpl implements InventoryService {
 
 
 	@Override
-	public Inventory updateInventory(Inventory inventory) {
-		ProductDto productDto = productClient.getProductById(inventory.getProductId());
-		if(productDto == null) {
-			throw new RuntimeException("Product Not Found");
-		}
-		inventory.setProductName(productDto.getName());
-		Optional<Inventory> inventoryOpt = inventoryRepository.findById(inventory.getProductId());
-		if (inventoryOpt.isPresent()) {
-			Inventory existingInventory = inventoryOpt.get();
-			existingInventory.setQuantity(inventory.getQuantity());
-			return inventoryRepository.save(existingInventory);
-		} else {
-			return inventoryRepository.save(inventory);
-		}
+	public Inventory updateInventory(InventoryDto inventoryDto) {
+	    // Fetch product details from product service using productId
+	    ProductDto productDto = productClient.getProductById(inventoryDto.getProductId());
+	    if (productDto == null) {
+	        throw new RuntimeException("Product Not Found");
+	    }
+	    
+	    // Attempt to fetch existing inventory by productId
+	    Optional<Inventory> inventoryOpt = inventoryRepository.findById(inventoryDto.getProductId());
+
+	    Inventory inventoryToSave;
+	    if (inventoryOpt.isPresent()) {
+	        // Inventory exists, update quantity and productName
+	        inventoryToSave = inventoryOpt.get();
+	        inventoryToSave.setQuantity(inventoryDto.getQuantity());
+	    } else {
+	        // No inventory exists, create new
+	        inventoryToSave = new Inventory();
+	        inventoryToSave.setProductId(inventoryDto.getProductId());
+	        inventoryToSave.setQuantity(inventoryDto.getQuantity());
+	    }
+
+	    // Set/update productName from productDto
+	    inventoryToSave.setProductName(productDto.getName());
+
+	    // Save and return the updated/new inventory
+	    return inventoryRepository.save(inventoryToSave);
 	}
 
 	@Override

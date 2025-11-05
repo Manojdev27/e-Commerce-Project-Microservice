@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.hogwarts.orderservice.client.InventoryClient;
 import com.hogwarts.orderservice.dto.InventoryDTO;
+import com.hogwarts.orderservice.dto.OrderRequestDto;
 import com.hogwarts.orderservice.entity.Order;
 import com.hogwarts.orderservice.repository.OrderRepository;
 import com.hogwarts.orderservice.service.OrderService;
@@ -23,26 +24,30 @@ public class OrderServiceImpl implements OrderService{
 	private InventoryClient inventoryClient;
 
 	@Override
-	public Order placeNewOrder(Order order) {
-		 InventoryDTO inventoryDTO = inventoryClient.getInventoryByProductId(order.getProductId());
+	public Order placeNewOrder(OrderRequestDto orderRequestDto) {
+	    InventoryDTO inventoryDTO = inventoryClient.getInventoryByProductId(orderRequestDto.getProductId());
 
-		    if(inventoryDTO == null) {
-		        throw new RuntimeException("The product is not found");
-		    }
+	    if (inventoryDTO == null) {
+	        throw new RuntimeException("Product not found in inventory");
+	    }
 
-		    if(order.getQuantity() > inventoryDTO.getQuantity()) {
-		        throw new RuntimeException("The order quantity is higher than the inventory quantity");
-		    }
+	    if (orderRequestDto.getQuantity() > inventoryDTO.getQuantity()) {
+	        throw new RuntimeException("Order quantity exceeds available inventory");
+	    }
 
-		    // Deduct order quantity from inventory quantity
-		    int remainingQuantity = inventoryDTO.getQuantity() - order.getQuantity();
-		    inventoryDTO.setQuantity(remainingQuantity);
+	    // Deduct quantity from inventory
+	    int remainingQuantity = inventoryDTO.getQuantity() - orderRequestDto.getQuantity();
+	    inventoryDTO.setQuantity(remainingQuantity);
+	    inventoryClient.updateInventory(inventoryDTO);
 
-		    inventoryClient.updateInventory(inventoryDTO);
+	    // Map OrderRequestDto to Order entity
+	    Order order = new Order();
+	    order.setProductId(orderRequestDto.getProductId());
+	    order.setQuantity(orderRequestDto.getQuantity());
+	    order.setProductName(inventoryDTO.getProductName());
 
-		    order.setProductName(inventoryDTO.getProductName());
-
-		    return orderRepository.save(order);
+	    // Save and return the order
+	    return orderRepository.save(order);
 	}
 
 	@Override
