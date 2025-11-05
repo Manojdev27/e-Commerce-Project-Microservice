@@ -9,5 +9,5 @@ public interface InventoryService {
 	public Inventory updateInventory(Inventory inventory);
 	public Inventory getInventoryByProductId(Long productId);
 	public List<Inventory> getAllInventory();
-	 public void inventoryUpdate(Inventory inventory); 
+//	public Inventory inventoryPut(int id, Inventory inventory);
 }

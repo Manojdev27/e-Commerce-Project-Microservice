@@ -24,22 +24,25 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public Order placeNewOrder(Order order) {
-		InventoryDTO inventoryDTO = inventoryClient.getInventoryByProductId(order.getProductId());
-		
-		if(inventoryDTO == null) {
-			throw new RuntimeException("The product is not found");
-		}
-		if(order.getQuantity() > inventoryDTO.getQuantity()) {
-			throw new RuntimeException("The order quantity is higher than the inventory quantity");
-		}
-		
-		if(inventoryDTO != null) {
-		order.setProductName(inventoryDTO.getProductName());
-		inventoryDTO.setQuantity(inventoryDTO.getQuantity() - order.getQuantity());
-		inventoryClient.updateInventory(inventoryDTO);
-		}
-		
-	    return orderRepository.save(order);
+		 InventoryDTO inventoryDTO = inventoryClient.getInventoryByProductId(order.getProductId());
+
+		    if(inventoryDTO == null) {
+		        throw new RuntimeException("The product is not found");
+		    }
+
+		    if(order.getQuantity() > inventoryDTO.getQuantity()) {
+		        throw new RuntimeException("The order quantity is higher than the inventory quantity");
+		    }
+
+		    // Deduct order quantity from inventory quantity
+		    int remainingQuantity = inventoryDTO.getQuantity() - order.getQuantity();
+		    inventoryDTO.setQuantity(remainingQuantity);
+
+		    inventoryClient.updateInventory(inventoryDTO);
+
+		    order.setProductName(inventoryDTO.getProductName());
+
+		    return orderRepository.save(order);
 	}
 
 	@Override

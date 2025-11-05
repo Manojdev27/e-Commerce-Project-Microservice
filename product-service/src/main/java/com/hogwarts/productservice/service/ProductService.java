@@ -10,5 +10,6 @@ public interface ProductService {
 	public Product addProduct(Product product);
 	public List<Product> getAllProduct();
 	public Optional<Product> getProductById(Long id);
+	public long generateSequence(String seqName);
 
 }

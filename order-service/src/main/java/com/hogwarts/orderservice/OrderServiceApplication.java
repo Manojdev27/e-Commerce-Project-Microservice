@@ -11,10 +11,6 @@ import io.swagger.v3.oas.annotations.info.Info;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@OpenAPIDefinition(info = @Info(
-		title = "Order Service Application",
-		version = "1.0",
-		description = "API Documnetation for Order Service"))
 public class OrderServiceApplication {
 
 	public static void main(String[] args) {

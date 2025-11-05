@@ -32,7 +32,7 @@ public class InventoryServiceImpl implements InventoryService {
 		Optional<Inventory> inventoryOpt = inventoryRepository.findById(inventory.getProductId());
 		if (inventoryOpt.isPresent()) {
 			Inventory existingInventory = inventoryOpt.get();
-			existingInventory.setQuantity(existingInventory.getQuantity() + inventory.getQuantity());
+			existingInventory.setQuantity(inventory.getQuantity());
 			return inventoryRepository.save(existingInventory);
 		} else {
 			return inventoryRepository.save(inventory);
@@ -49,20 +49,5 @@ public class InventoryServiceImpl implements InventoryService {
 	public List<Inventory> getAllInventory() {
 		return inventoryRepository.findAll();
 	}
-
-	@Override
-	public void inventoryUpdate(Inventory inventory) {
-		Optional<Inventory> inventoryOpt = inventoryRepository.findById(inventory.getProductId());
-        if (inventoryOpt.isPresent()) {
-            Inventory inventory2 = inventoryOpt.get();
-            inventory.setQuantity(inventory.getQuantity());
-            inventoryRepository.save(inventory2);
-        } else {
-            throw new RuntimeException("Inventory not found for product id " + inventory.getProductId());
-        }
 		
-	}
-	
-	
-
 }

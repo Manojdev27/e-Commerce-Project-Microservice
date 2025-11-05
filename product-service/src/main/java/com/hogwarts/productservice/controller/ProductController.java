@@ -23,6 +23,7 @@ public class ProductController {
 	
 	@PostMapping("/addProduct")
 	public Product addProduct(@RequestBody Product product) {
+		product.setId(productService.generateSequence("product_sequence"));
 		return productService.addProduct(product);
 	}
 	
