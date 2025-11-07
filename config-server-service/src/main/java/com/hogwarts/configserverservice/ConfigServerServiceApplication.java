@@ -1,18 +1,17 @@
-package com.hogwarts.inventoryservice;
+package com.hogwarts.configserverservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-
+import org.springframework.cloud.config.server.EnableConfigServer;
 
 @SpringBootApplication
+@EnableConfigServer
 @EnableDiscoveryClient
-@EnableFeignClients
-public class InventoryServiceApplication {
+public class ConfigServerServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(InventoryServiceApplication.class, args);
+		SpringApplication.run(ConfigServerServiceApplication.class, args);
 	}
 
 }

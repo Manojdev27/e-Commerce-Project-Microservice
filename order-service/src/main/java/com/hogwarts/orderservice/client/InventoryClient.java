@@ -14,7 +14,7 @@ public interface InventoryClient {
 
     @GetMapping("/api/v1/inventory/{productId}")
     InventoryDTO getInventoryByProductId(@PathVariable Long productId);
-
-    @PostMapping("/api/v1/inventory/inventoryUpdate")
-    InventoryDTO updateInventory(@RequestBody InventoryDTO inventoryDTO);
+    
+    @PutMapping("/api/v1/inventory/{productId}")
+    InventoryDTO inventoryPut(@PathVariable Long productId, @RequestBody InventoryDTO inventoryDTO);
 }

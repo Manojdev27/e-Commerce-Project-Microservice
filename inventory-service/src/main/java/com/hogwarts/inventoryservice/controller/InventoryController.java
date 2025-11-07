@@ -1,11 +1,14 @@
 package com.hogwarts.inventoryservice.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,12 +28,20 @@ public class InventoryController {
 	public Inventory updateInventory(@RequestBody InventoryDto inventory) {
 		return inventoryService.updateInventory(inventory);
 	}
-	@GetMapping("/{productId}")
-	public Inventory getInventoryByProductId(@PathVariable Long productId) {
-	    return inventoryService.getInventoryByProductId(productId);
+	@GetMapping("/{id}")
+	public ResponseEntity<Inventory> getInventoryById(@PathVariable Long id) {
+	    Optional<Inventory> item = inventoryService.getInventoryByProductId(id);
+	    return item.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 	@GetMapping("/getAllInventory")
 	public List<Inventory> getAllInventory(){
 		return inventoryService.getAllInventory();
+	}
+	
+	@PutMapping("/{productId}")
+	public Inventory inventoryPut(@PathVariable Long productId, @RequestBody InventoryDto inventoryDto) {
+		Inventory updatedInventory = inventoryService.inventoryPut(productId, inventoryDto);
+		return updatedInventory;
+		
 	}
 }

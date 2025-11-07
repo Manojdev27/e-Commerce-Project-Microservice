@@ -3,6 +3,8 @@ package com.hogwarts.productservice.serviceImpl;
 import java.util.List;
 import java.util.Optional;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +17,8 @@ import com.hogwarts.productservice.entity.Product;
 import com.hogwarts.productservice.repository.ProductRepository;
 import com.hogwarts.productservice.service.ProductService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @Service
 public class ProductServiceImpl implements ProductService{
 	
@@ -23,6 +27,8 @@ public class ProductServiceImpl implements ProductService{
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+	private static final String FALLBACK_METHOD = "fallbackMethod";
 	
 
 	@Override
@@ -33,8 +39,11 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public List<Product> getAllProduct() {
-		
-		return productRepository.findAll();
+		List<Product> productList = productRepository.findAll();
+		if(productList.isEmpty()) {
+			throw new RuntimeException("No Product Available");
+		}
+		return productList;
 	}
 
 	@Override
@@ -47,8 +56,16 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
+	@CircuitBreaker(name =FALLBACK_METHOD,fallbackMethod = "fallBackResponse")
 	public Optional<Product> getProductById(Long id) {
-		return productRepository.findById(id);
+		Optional<Product> product = productRepository.findById(id);
+		if(product.isEmpty()) {
+			throw new RuntimeException("Service Failed");
+		}
+		return product;
 	}
 
+	public String fallBackResponse(Exception e) {
+		return "FallBack Response: "+e.getMessage();
+	}
 }

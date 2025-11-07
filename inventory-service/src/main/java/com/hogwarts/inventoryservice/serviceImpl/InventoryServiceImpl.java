@@ -54,14 +54,26 @@ public class InventoryServiceImpl implements InventoryService {
 	}
 
 	@Override
-	public Inventory getInventoryByProductId(Long productId) {
-
-		return inventoryRepository.findById(productId).orElse(null);
+	public Optional<Inventory> getInventoryByProductId(Long productId) {
+		 Optional<Inventory> optId = inventoryRepository.findByProductId(productId);
+		return optId;
 	}
 
 	@Override
 	public List<Inventory> getAllInventory() {
 		return inventoryRepository.findAll();
+	}
+
+	@Override
+	public Inventory inventoryPut(Long productId, InventoryDto inventoryDto) {
+		ProductDto productDto = productClient.getProductById(inventoryDto.getProductId());
+		Inventory existingInventory = inventoryRepository.findByProductId(productId)
+				.orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));;
+				existingInventory.setProductId(inventoryDto.getProductId());
+				existingInventory.setQuantity(inventoryDto.getQuantity());
+				existingInventory.setProductName(productDto.getName());
+				Inventory savedInventory = inventoryRepository.save(existingInventory);
+		return savedInventory;
 	}
 		
 }

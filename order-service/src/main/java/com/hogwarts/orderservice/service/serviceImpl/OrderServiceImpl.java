@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService{
 	    // Deduct quantity from inventory
 	    int remainingQuantity = inventoryDTO.getQuantity() - orderRequestDto.getQuantity();
 	    inventoryDTO.setQuantity(remainingQuantity);
-	    inventoryClient.updateInventory(inventoryDTO);
+	    inventoryClient.inventoryPut(inventoryDTO.getProductId(), inventoryDTO);
 
 	    // Map OrderRequestDto to Order entity
 	    Order order = new Order();
@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService{
 	        // Deduct inventory quantity
 	        int remainingQuantity = inventoryDTO.getQuantity() - orderRequest.getQuantity();
 	        inventoryDTO.setQuantity(remainingQuantity);
-	        inventoryClient.updateInventory(inventoryDTO);
+	        inventoryClient.inventoryPut(inventoryDTO.getProductId(), inventoryDTO);
 
 	        // Create and save order
 	        Order order = new Order();
