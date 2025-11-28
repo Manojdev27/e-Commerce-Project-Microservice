@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre
+FROM openjdk:17
 WORKDIR /app
 COPY ./target/Product-Service-0.0.1-SNAPSHOT.jar /app/
 EXPOSE 8080
